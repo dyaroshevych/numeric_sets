@@ -1,3 +1,40 @@
+"""Interval and NumericSet classes with methods to work with numeric intervals.
+
+    Interval methods
+    ----------------
+        get_formatted - return formatted interval as a string
+        is_overlapping - determine whether intervals overlap
+        is_almost_overlapping - determine whether intervals almost overlap
+        includes - determine whether the interval includes the given point
+        copy - return a copy of the interval
+        difference - return the difference between two given intervals
+        intersection - return the intersection of two given intervals
+        union - return the union of two given intervals
+
+    NumericSet methods
+    ----------------
+        get_left_intervals - construct a list of intervals to the left from the interval
+        get_right_intervals - construct a list of intervals to the right from the interval
+        add - add a numeric interval to the set
+        clear - clear the set from all numeric intervals
+        copy - return a copy of the numric set
+        difference - return the difference between the set and the given set
+        difference_update - assign set to difference between it and the given set
+        intersection - return an intersection of the set and the given set
+        intersection_update - assign set to an intersection of it and the given set
+        issubset - determine whether the set is a subset of the given set
+        issuperset - determine whether the set is a superset of the given set
+        pop - remove the rightmost interval if such exists
+        remove - remove a numeric interval from the set
+        symmetric_difference - return the symmetric difference of two sets
+        symmetric_difference_update - assign set to the symmetric difference of two sets
+        union - return a union of the set and the given set
+        update - assign set to the union of it and the given set
+        is_empty - determine whether a set of intervals is empty
+        save - save a set of numeric intervals in the given file
+        read - read a set of numerical intervals from the given file
+"""
+
 from typing import List
 from numbers import Number
 
@@ -132,15 +169,15 @@ class Interval:
             right = Interval(start, end, is_start_inclusive, is_end_inclusive)
 
         # Add constructed intervals to the set.
-        numeric_set = Numeric_Set()
+        NumericSet = NumericSet()
 
         if left is not None:
-            numeric_set.add(left)
+            NumericSet.add(left)
 
         if right is not None:
-            numeric_set.add(right)
+            NumericSet.add(right)
 
-        return numeric_set
+        return NumericSet
 
     @staticmethod
     def intersection(interval_1, interval_2):
@@ -168,7 +205,7 @@ class Interval:
         """
         # Check if the result should consist of two separate intervals.
         if not (interval_1.is_overlapping(interval_2) or interval_1.is_almost_overlapping(interval_2)):
-            return Numeric_Set([interval_1, interval_2])
+            return NumericSet([interval_1, interval_2])
 
         start = min(interval_1.start, interval_2.start)
         end = max(interval_1.end, interval_2.end)
@@ -180,10 +217,10 @@ class Interval:
 
         result = Interval(start, end, is_start_inclusive, is_end_inclusive)
 
-        return Numeric_Set([result])
+        return NumericSet([result])
 
 
-class Numeric_Set:
+class NumericSet:
     def __init__(self, intervals=[]):
         self.intervals = sorted(intervals, key=lambda interval: interval.start)
 
@@ -268,7 +305,7 @@ class Numeric_Set:
         """
         Return a copy of the numric set.
         """
-        return Numeric_Set([interval.copy() for interval in self.intervals])
+        return NumericSet([interval.copy() for interval in self.intervals])
 
     def difference(self, set) -> None:
         """

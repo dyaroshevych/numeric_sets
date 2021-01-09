@@ -1,13 +1,13 @@
-"""Test NumericSet class methods from the 'numeric_sets' module using unittest."""
+"""Test NumericSet class methods from the 'NumericSets' module using unittest."""
 
 
 import unittest
-from numeric_sets.main import Interval, Numeric_Set
+from NumericSets.main import Interval, NumericSet
 
 
 class TestAdd(unittest.TestCase):
     def test_regular(self):
-        myset = Numeric_Set()
+        myset = NumericSet()
         myset.add(Interval(2, 3))  # (2, 3)
         myset.add(Interval(13, 15))  # (13, 15)
         myset.add(Interval(9, 10))  # (9, 10)
@@ -23,13 +23,13 @@ class TestAdd(unittest.TestCase):
         self.assertEqual(myset.intervals[3].get_formatted(), '(13, 15)')
 
     def test_empty(self):
-        myset = Numeric_Set()
+        myset = NumericSet()
         myset.add(Interval(2, 3))  # (2, 3)
 
         self.assertEqual(len(myset.intervals), 1)
 
     def test_start_overlapping_negative(self):
-        myset = Numeric_Set()
+        myset = NumericSet()
         myset.add(Interval(2, 3))  # (2, 3)
         myset.add(Interval(1, 2))  # (1, 2)
 
@@ -38,7 +38,7 @@ class TestAdd(unittest.TestCase):
         self.assertEqual(myset.intervals[1].get_formatted(), '(2, 3)')
 
     def test_start_overlapping_positive(self):
-        myset = Numeric_Set()
+        myset = NumericSet()
         myset.add(Interval(2, 3))  # (2, 3)
         myset.add(Interval(1, 2, is_end_inclusive=True))  # (1, 2]
 
@@ -46,7 +46,7 @@ class TestAdd(unittest.TestCase):
         self.assertEqual(myset.intervals[0].get_formatted(), '(1, 3)')
 
     def test_end_overlapping_negative(self):
-        myset = Numeric_Set()
+        myset = NumericSet()
         myset.add(Interval(1, 2))  # (1, 2)
         myset.add(Interval(2, 3))  # (2, 3)
 
@@ -55,7 +55,7 @@ class TestAdd(unittest.TestCase):
         self.assertEqual(myset.intervals[1].get_formatted(), '(2, 3)')
 
     def test_end_overlapping_positive(self):
-        myset = Numeric_Set()
+        myset = NumericSet()
         myset.add(Interval(1, 2, is_end_inclusive=True))  # (1, 2]
         myset.add(Interval(2, 3))  # (2, 3)
 
@@ -65,7 +65,7 @@ class TestAdd(unittest.TestCase):
 
 class TestLeftIntervals(unittest.TestCase):
     def test_empty(self):
-        myset = Numeric_Set()
+        myset = NumericSet()
         myset.add(Interval(1, 2))  # (1, 2)
         myset.add(Interval(2, 3))  # (2, 3)
 
@@ -74,7 +74,7 @@ class TestLeftIntervals(unittest.TestCase):
         self.assertEqual(len(left_intervals), 0)
 
     def test_ordinary(self):
-        myset = Numeric_Set()
+        myset = NumericSet()
         myset.add(Interval(1, 2))  # (1, 2)
         myset.add(Interval(2, 3))  # (2, 3)
         myset.add(Interval(4, 5))  # (4, 5)
@@ -86,7 +86,7 @@ class TestLeftIntervals(unittest.TestCase):
 
 class TestRightIntervals(unittest.TestCase):
     def test_empty(self):
-        myset = Numeric_Set()
+        myset = NumericSet()
         myset.add(Interval(1, 2))  # (1, 2)
         myset.add(Interval(2, 3))  # (2, 3)
 
@@ -95,7 +95,7 @@ class TestRightIntervals(unittest.TestCase):
         self.assertEqual(len(right_intervals), 0)
 
     def test_ordinary(self):
-        myset = Numeric_Set()
+        myset = NumericSet()
         myset.add(Interval(1, 2))  # (1, 2)
         myset.add(Interval(2, 3))  # (2, 3)
         myset.add(Interval(4, 5))  # (4, 5)
@@ -107,7 +107,7 @@ class TestRightIntervals(unittest.TestCase):
 
 class TestClear(unittest.TestCase):
     def test_ordinary(self):
-        myset = Numeric_Set()
+        myset = NumericSet()
         myset.add(Interval(1, 2))
         myset.add(Interval(2, 3))
 
@@ -118,7 +118,7 @@ class TestClear(unittest.TestCase):
 
 class TestCopy(unittest.TestCase):
     def test_ordinary(self):
-        myset = Numeric_Set()
+        myset = NumericSet()
         myset.add(Interval(1, 2))
         myset.add(Interval(2, 3))
 
@@ -132,13 +132,13 @@ class TestCopy(unittest.TestCase):
 
 class TestDifference(unittest.TestCase):
     def test_ordinary(self):
-        myset_1 = Numeric_Set()
+        myset_1 = NumericSet()
 
         myset_1.add(Interval(2, 4))
         myset_1.add(Interval(5, 7))
         myset_1.add(Interval(8, 10))
 
-        myset_2 = Numeric_Set()
+        myset_2 = NumericSet()
 
         myset_2.add(Interval(3, 5))
         myset_2.add(Interval(6, 8))
@@ -163,13 +163,13 @@ class TestDifference(unittest.TestCase):
         self.assertFalse(difference.intervals[2].is_end_inclusive)
 
     def test_points(self):
-        myset_1 = Numeric_Set()
+        myset_1 = NumericSet()
 
         myset_1.add(Interval(2, 4, True))
         myset_1.add(Interval(5, 7))
         myset_1.add(Interval(8, 10, is_end_inclusive=True))
 
-        myset_2 = Numeric_Set()
+        myset_2 = NumericSet()
 
         myset_2.add(Interval(2, 5))
         myset_2.add(Interval(5, 10))
@@ -191,13 +191,13 @@ class TestDifference(unittest.TestCase):
 
 class TestIntersection(unittest.TestCase):
     def test_ordinary(self):
-        myset_1 = Numeric_Set()
+        myset_1 = NumericSet()
 
         myset_1.add(Interval(2, 4, is_end_inclusive=True))  # (2, 4]
         myset_1.add(Interval(5, 7))  # (5, 7)
         myset_1.add(Interval(8, 10, is_end_inclusive=True))  # (8, 10]
 
-        myset_2 = Numeric_Set()
+        myset_2 = NumericSet()
 
         myset_2.add(Interval(2, 5))  # (2, 5)
         myset_2.add(Interval(6, 9))  # (6, 9)
@@ -223,13 +223,13 @@ class TestIntersection(unittest.TestCase):
         self.assertFalse(intersection.intervals[2].is_end_inclusive)
 
     def test_points(self):
-        myset_1 = Numeric_Set()
+        myset_1 = NumericSet()
 
         myset_1.add(Interval(2, 4, is_end_inclusive=True))  # (2, 4]
         myset_1.add(Interval(5, 7, True))  # [5, 7)
         myset_1.add(Interval(8, 10, is_end_inclusive=True))  # (8, 10]
 
-        myset_2 = Numeric_Set()
+        myset_2 = NumericSet()
 
         myset_2.add(Interval(4, 5, True))  # [4, 5)
         myset_2.add(Interval(7, 8))  # (7, 8)
@@ -247,13 +247,13 @@ class TestIntersection(unittest.TestCase):
 
 class TestSubset(unittest.TestCase):
     def test_ordinary_negative(self):
-        myset_1 = Numeric_Set()
+        myset_1 = NumericSet()
 
         myset_1.add(Interval(2, 4, is_end_inclusive=True))  # (2, 4]
         myset_1.add(Interval(5, 7, True))  # [5, 7)
         myset_1.add(Interval(8, 10, is_end_inclusive=True))  # (8, 10]
 
-        myset_2 = Numeric_Set()
+        myset_2 = NumericSet()
 
         myset_2.add(Interval(2, 10))  # (2, 10)
 
@@ -261,13 +261,13 @@ class TestSubset(unittest.TestCase):
         self.assertFalse(myset_2.issubset(myset_1))
 
     def test_ordinary_positive(self):
-        myset_1 = Numeric_Set()
+        myset_1 = NumericSet()
 
         myset_1.add(Interval(2, 4, is_end_inclusive=True))  # (2, 4]
         myset_1.add(Interval(5, 7, True))  # [5, 7)
         myset_1.add(Interval(8, 10, is_end_inclusive=True))  # (8, 10]
 
-        myset_2 = Numeric_Set()
+        myset_2 = NumericSet()
 
         myset_2.add(Interval(2, 10, is_end_inclusive=True))  # (2, 10]
 
@@ -277,13 +277,13 @@ class TestSubset(unittest.TestCase):
 
 class TestSuperset(unittest.TestCase):
     def test_ordinary_negative(self):
-        myset_1 = Numeric_Set()
+        myset_1 = NumericSet()
 
         myset_1.add(Interval(2, 4, is_end_inclusive=True))  # (2, 4]
         myset_1.add(Interval(5, 7, True))  # [5, 7)
         myset_1.add(Interval(8, 10, is_end_inclusive=True))  # (8, 10]
 
-        myset_2 = Numeric_Set()
+        myset_2 = NumericSet()
 
         myset_2.add(Interval(2, 10))  # (2, 10)
 
@@ -291,13 +291,13 @@ class TestSuperset(unittest.TestCase):
         self.assertFalse(myset_2.issuperset(myset_1))
 
     def test_ordinary_positive(self):
-        myset_1 = Numeric_Set()
+        myset_1 = NumericSet()
 
         myset_1.add(Interval(2, 4, is_end_inclusive=True))  # (2, 4]
         myset_1.add(Interval(5, 7, True))  # [5, 7)
         myset_1.add(Interval(8, 10, is_end_inclusive=True))  # (8, 10]
 
-        myset_2 = Numeric_Set()
+        myset_2 = NumericSet()
 
         myset_2.add(Interval(2, 10, is_end_inclusive=True))  # (2, 10]
 
@@ -307,7 +307,7 @@ class TestSuperset(unittest.TestCase):
 
 class TestPop(unittest.TestCase):
     def test_ordinary(self):
-        myset = Numeric_Set()
+        myset = NumericSet()
         interval = Interval(2, 4)
 
         myset.add(interval)
@@ -315,14 +315,14 @@ class TestPop(unittest.TestCase):
         self.assertEqual(myset.pop(), interval)
 
     def test_empty(self):
-        myset = Numeric_Set()
+        myset = NumericSet()
 
         self.assertEqual(myset.pop(), None)
 
 
 class TestRemove(unittest.TestCase):
     def test_points(self):
-        myset = Numeric_Set()
+        myset = NumericSet()
 
         myset.add(Interval(2, 3, is_start_inclusive=True))
         myset.add(Interval(4, 5))
@@ -346,7 +346,7 @@ class TestRemove(unittest.TestCase):
         self.assertTrue(myset.intervals[1].is_end_inclusive)
 
     def test_ordinary(self):
-        myset = Numeric_Set()
+        myset = NumericSet()
 
         myset.add(Interval(2, 3))
         myset.add(Interval(4, 5))
@@ -372,13 +372,13 @@ class TestRemove(unittest.TestCase):
 
 class TestSymmetricDifference(unittest.TestCase):
     def test_ordinary(self):
-        myset_1 = Numeric_Set()
+        myset_1 = NumericSet()
 
         myset_1.add(Interval(2, 4, True, True))  # [2, 4]
         myset_1.add(Interval(5, 7))  # (5, 7)
         myset_1.add(Interval(8, 10, is_end_inclusive=True))  # (8, 10]
 
-        myset_2 = Numeric_Set()
+        myset_2 = NumericSet()
 
         myset_2.add(Interval(2, 5))  # (2, 5)
         myset_2.add(Interval(6, 9))  # (6, 9)
@@ -416,13 +416,13 @@ class TestSymmetricDifference(unittest.TestCase):
 
 class TestUnion(unittest.TestCase):
     def test_ordinary(self):
-        myset_1 = Numeric_Set()
+        myset_1 = NumericSet()
 
         myset_1.add(Interval(2, 4, True, True))  # [2, 4]
         myset_1.add(Interval(5, 7))  # (5, 7)
         myset_1.add(Interval(8, 10, is_end_inclusive=True))  # (8, 10]
 
-        myset_2 = Numeric_Set()
+        myset_2 = NumericSet()
 
         myset_2.add(Interval(2, 5))  # (2, 5)
         myset_2.add(Interval(6, 9))  # (6, 9)
@@ -445,12 +445,12 @@ class TestUnion(unittest.TestCase):
 
 class TestEmpty(unittest.TestCase):
     def test_ordinary_negative(self):
-        myset = Numeric_Set()
+        myset = NumericSet()
 
         self.assertTrue(myset.is_empty())
 
     def test_ordinary_positive(self):
-        myset = Numeric_Set()
+        myset = NumericSet()
         myset.add(Interval(2, 4))
 
         self.assertFalse(myset.is_empty())
