@@ -246,18 +246,78 @@ class TestIntersection(unittest.TestCase):
 
 
 class TestSubset(unittest.TestCase):
-    def test_ordinary(self):
-        pass
+    def test_ordinary_negative(self):
+        myset_1 = Numeric_Set()
+
+        myset_1.add(Interval(2, 4, is_end_inclusive=True))  # (2, 4]
+        myset_1.add(Interval(5, 7, True))  # [5, 7)
+        myset_1.add(Interval(8, 10, is_end_inclusive=True))  # (8, 10]
+
+        myset_2 = Numeric_Set()
+
+        myset_2.add(Interval(2, 10))  # (2, 10)
+
+        self.assertFalse(myset_1.issubset(myset_2))
+        self.assertFalse(myset_2.issubset(myset_1))
+
+    def test_ordinary_positive(self):
+        myset_1 = Numeric_Set()
+
+        myset_1.add(Interval(2, 4, is_end_inclusive=True))  # (2, 4]
+        myset_1.add(Interval(5, 7, True))  # [5, 7)
+        myset_1.add(Interval(8, 10, is_end_inclusive=True))  # (8, 10]
+
+        myset_2 = Numeric_Set()
+
+        myset_2.add(Interval(2, 10, is_end_inclusive=True))  # (2, 10]
+
+        self.assertTrue(myset_1.issubset(myset_2))
+        self.assertFalse(myset_2.issubset(myset_1))
 
 
 class TestSuperset(unittest.TestCase):
-    def test_ordinary(self):
-        pass
+    def test_ordinary_negative(self):
+        myset_1 = Numeric_Set()
+
+        myset_1.add(Interval(2, 4, is_end_inclusive=True))  # (2, 4]
+        myset_1.add(Interval(5, 7, True))  # [5, 7)
+        myset_1.add(Interval(8, 10, is_end_inclusive=True))  # (8, 10]
+
+        myset_2 = Numeric_Set()
+
+        myset_2.add(Interval(2, 10))  # (2, 10)
+
+        self.assertFalse(myset_1.issuperset(myset_2))
+        self.assertFalse(myset_2.issuperset(myset_1))
+
+    def test_ordinary_positive(self):
+        myset_1 = Numeric_Set()
+
+        myset_1.add(Interval(2, 4, is_end_inclusive=True))  # (2, 4]
+        myset_1.add(Interval(5, 7, True))  # [5, 7)
+        myset_1.add(Interval(8, 10, is_end_inclusive=True))  # (8, 10]
+
+        myset_2 = Numeric_Set()
+
+        myset_2.add(Interval(2, 10, is_end_inclusive=True))  # (2, 10]
+
+        self.assertFalse(myset_1.issuperset(myset_2))
+        self.assertTrue(myset_2.issuperset(myset_1))
 
 
 class TestPop(unittest.TestCase):
     def test_ordinary(self):
-        pass
+        myset = Numeric_Set()
+        interval = Interval(2, 4)
+
+        myset.add(interval)
+
+        self.assertEqual(myset.pop(), interval)
+
+    def test_empty(self):
+        myset = Numeric_Set()
+
+        self.assertEqual(myset.pop(), None)
 
 
 class TestRemove(unittest.TestCase):
@@ -312,27 +372,88 @@ class TestRemove(unittest.TestCase):
 
 class TestSymmetricDifference(unittest.TestCase):
     def test_ordinary(self):
-        pass
+        myset_1 = Numeric_Set()
 
+        myset_1.add(Interval(2, 4, True, True))  # [2, 4]
+        myset_1.add(Interval(5, 7))  # (5, 7)
+        myset_1.add(Interval(8, 10, is_end_inclusive=True))  # (8, 10]
 
-class TestSymmetricDifferenceUpdate(unittest.TestCase):
-    def test_ordinary(self):
-        pass
+        myset_2 = Numeric_Set()
+
+        myset_2.add(Interval(2, 5))  # (2, 5)
+        myset_2.add(Interval(6, 9))  # (6, 9)
+
+        symmetric_diff = myset_1.symmetric_difference(
+            myset_2)  # {2} + (4, 5) + [7, 8] + [9, 10]
+
+        self.assertEqual(len(symmetric_diff.intervals), 5)
+
+        self.assertEqual(symmetric_diff.intervals[0].start, 2)
+        self.assertEqual(symmetric_diff.intervals[0].end, 2)
+        self.assertTrue(symmetric_diff.intervals[0].is_start_inclusive)
+        self.assertTrue(symmetric_diff.intervals[0].is_end_inclusive)
+
+        self.assertEqual(symmetric_diff.intervals[1].start, 4)
+        self.assertEqual(symmetric_diff.intervals[1].end, 5)
+        self.assertFalse(symmetric_diff.intervals[1].is_start_inclusive)
+        self.assertFalse(symmetric_diff.intervals[1].is_end_inclusive)
+
+        self.assertEqual(symmetric_diff.intervals[2].start, 5)
+        self.assertEqual(symmetric_diff.intervals[2].end, 6)
+        self.assertFalse(symmetric_diff.intervals[2].is_start_inclusive)
+        self.assertTrue(symmetric_diff.intervals[2].is_end_inclusive)
+
+        self.assertEqual(symmetric_diff.intervals[3].start, 7)
+        self.assertEqual(symmetric_diff.intervals[3].end, 8)
+        self.assertTrue(symmetric_diff.intervals[3].is_start_inclusive)
+        self.assertTrue(symmetric_diff.intervals[3].is_end_inclusive)
+
+        self.assertEqual(symmetric_diff.intervals[4].start, 9)
+        self.assertEqual(symmetric_diff.intervals[4].end, 10)
+        self.assertTrue(symmetric_diff.intervals[4].is_start_inclusive)
+        self.assertTrue(symmetric_diff.intervals[4].is_end_inclusive)
 
 
 class TestUnion(unittest.TestCase):
     def test_ordinary(self):
-        pass
+        myset_1 = Numeric_Set()
 
+        myset_1.add(Interval(2, 4, True, True))  # [2, 4]
+        myset_1.add(Interval(5, 7))  # (5, 7)
+        myset_1.add(Interval(8, 10, is_end_inclusive=True))  # (8, 10]
 
-class TestUpdate(unittest.TestCase):
-    def test_ordinary(self):
-        pass
+        myset_2 = Numeric_Set()
+
+        myset_2.add(Interval(2, 5))  # (2, 5)
+        myset_2.add(Interval(6, 9))  # (6, 9)
+
+        union = myset_1.union(
+            myset_2)  # [2, 5) + (5, 10]
+
+        self.assertEqual(len(union.intervals), 2)
+
+        self.assertEqual(union.intervals[0].start, 2)
+        self.assertEqual(union.intervals[0].end, 5)
+        self.assertTrue(union.intervals[0].is_start_inclusive)
+        self.assertFalse(union.intervals[0].is_end_inclusive)
+
+        self.assertEqual(union.intervals[1].start, 5)
+        self.assertEqual(union.intervals[1].end, 10)
+        self.assertFalse(union.intervals[1].is_start_inclusive)
+        self.assertTrue(union.intervals[1].is_end_inclusive)
 
 
 class TestEmpty(unittest.TestCase):
-    def test_ordinary(self):
-        pass
+    def test_ordinary_negative(self):
+        myset = Numeric_Set()
+
+        self.assertTrue(myset.is_empty())
+
+    def test_ordinary_positive(self):
+        myset = Numeric_Set()
+        myset.add(Interval(2, 4))
+
+        self.assertFalse(myset.is_empty())
 
 
 if __name__ == '__main__':

@@ -251,7 +251,7 @@ class Numeric_Set:
         is_start_inclusive = (new_interval.start == new_start and new_interval.is_start_inclusive) or (
             (self.intervals[len(left)].start == new_start and self.intervals[len(left)].is_start_inclusive))
         is_end_inclusive = (new_interval.end == new_end and new_interval.is_end_inclusive) or (
-            self.intervals[len(left)].end == new_end and self.intervals[len(left)].is_end_inclusive)
+            self.intervals[~len(right)].end == new_end and self.intervals[~len(right)].is_end_inclusive)
 
         updated_interval = Interval(
             new_start, new_end, is_start_inclusive, is_end_inclusive)
@@ -317,13 +317,13 @@ class Numeric_Set:
         """
         Determine whether the set is a subset of the given set.
         """
-        return set.difference(self).is_empty()
+        return self.difference(set).is_empty()
 
     def issuperset(self, set) -> bool:
         """
         Determine whether the set is a superset of the given set.
         """
-        return self.difference(set).is_empty()
+        return set.issubset(self)
 
     def pop(self) -> Interval:
         """
@@ -361,13 +361,13 @@ class Numeric_Set:
 
     def symmetric_difference(self, set):
         """
-        Return a set with the symmetric differences of two sets.
+        Return a set with the symmetric difference of two sets.
         """
         return self.difference(set).union(set.difference(self))
 
     def symmetric_difference_update(self, set):
         """
-        Find a set with the symmetric differences of two sets
+        Find a set with the symmetric difference of two sets
         and update the set to be equal to it.
         """
         self.intervals = self.difference(set).union(
