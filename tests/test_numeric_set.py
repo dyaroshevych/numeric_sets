@@ -2,7 +2,7 @@
 
 
 import unittest
-from NumericSets.main import Interval, NumericSet
+from numeric_sets.main import Interval, NumericSet
 
 
 class TestAdd(unittest.TestCase):

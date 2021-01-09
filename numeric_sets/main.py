@@ -40,6 +40,8 @@ from numbers import Number
 
 
 class Interval:
+    """Class for performing operations on numeric intervals."""
+
     def __init__(self, start: int, end: int,
                  is_start_inclusive: bool = False, is_end_inclusive: int = False):
         """
@@ -204,7 +206,8 @@ class Interval:
         Return a set of intervals that consists of union of two given intervals.
         """
         # Check if the result should consist of two separate intervals.
-        if not (interval_1.is_overlapping(interval_2) or interval_1.is_almost_overlapping(interval_2)):
+        if not (interval_1.is_overlapping(interval_2) or
+                interval_1.is_almost_overlapping(interval_2)):
             return NumericSet([interval_1, interval_2])
 
         start = min(interval_1.start, interval_2.start)
@@ -221,6 +224,8 @@ class Interval:
 
 
 class NumericSet:
+    """Class for performing operations on sets of numeric intervals."""
+
     def __init__(self, intervals=None):
         if intervals is None:
             intervals = []
@@ -288,10 +293,14 @@ class NumericSet:
             new_start = min(new_start, self.intervals[len(left)].start)
             new_end = max(new_end, self.intervals[~len(right)].end)
 
-        is_start_inclusive = (new_interval.start == new_start and new_interval.is_start_inclusive) or (
-            (self.intervals[len(left)].start == new_start and self.intervals[len(left)].is_start_inclusive))
-        is_end_inclusive = (new_interval.end == new_end and new_interval.is_end_inclusive) or (
-            self.intervals[~len(right)].end == new_end and self.intervals[~len(right)].is_end_inclusive)
+        is_start_inclusive = ((new_interval.start == new_start and
+                               new_interval.is_start_inclusive) or (
+            self.intervals[len(left)].start == new_start and
+            self.intervals[len(left)].is_start_inclusive))
+        is_end_inclusive = ((new_interval.end == new_end and
+                             new_interval.is_end_inclusive) or (
+            self.intervals[~len(right)].end == new_end and
+            self.intervals[~len(right)].is_end_inclusive))
 
         updated_interval = Interval(
             new_start, new_end, is_start_inclusive, is_end_inclusive)
@@ -403,7 +412,7 @@ class NumericSet:
         """
         Return a set with the symmetric difference of two sets.
         """
-        return self.difference(numeric_set).union(set.difference(self))
+        return self.difference(numeric_set).union(numeric_set.difference(self))
 
     def symmetric_difference_update(self, numeric_set):
         """
