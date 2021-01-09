@@ -292,12 +292,26 @@ class Numeric_Set:
         """
         Return an intersection of the set and the given set.
         """
+        updated_set = self.copy()
+        updated_set.intersection_update(set)
+
+        return updated_set
 
     def intersection_update(self, set) -> None:
         """
         Calculate intersection of the set and the
         given set and update the set in-place.
         """
+        updated_intervals = []
+
+        for interval in set.intervals:
+            for intr in self.intervals:
+                intersection = Interval.intersection(interval, intr)
+
+                if intersection is not None:
+                    updated_intervals.append(intersection)
+
+        self.intervals = updated_intervals
 
     def issubset(self, set) -> bool:
         """
@@ -339,7 +353,6 @@ class Numeric_Set:
             middle_intervals = self.intervals[len(left):~len(right) + 1]
 
         for intr in middle_intervals:
-            print(intr.get_formatted())
             diff = Interval.difference(intr, interval)
 
             middle += diff.intervals
@@ -392,7 +405,7 @@ class Numeric_Set:
             for interval in self.intervals:
                 output_file.write(interval.get_formatted() + '\n')
 
-    @staticmethod
+    @ staticmethod
     def read(filename: str) -> List[Interval]:
         """
         Read a set of numerical intervals from the given file.
@@ -416,18 +429,3 @@ class Numeric_Set:
                     Interval(start, end, is_start_inclusive, is_end_inclusive))
 
         return intervals
-
-
-# myset = Numeric_Set()
-
-# myset.add(Interval(2, 3))
-# myset.add(Interval(4, 5))
-# myset.add(Interval(6, 7))
-# myset.add(Interval(8, 9))
-# myset.add(Interval(10, 11))
-# myset.add(Interval(12, 13, is_end_inclusive=True))
-
-# myset.remove(Interval(-10, 13))
-
-
-# myset.save()

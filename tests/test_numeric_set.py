@@ -130,5 +130,210 @@ class TestCopy(unittest.TestCase):
         ), myset.intervals[1].get_formatted())
 
 
+class TestDifference(unittest.TestCase):
+    def test_ordinary(self):
+        myset_1 = Numeric_Set()
+
+        myset_1.add(Interval(2, 4))
+        myset_1.add(Interval(5, 7))
+        myset_1.add(Interval(8, 10))
+
+        myset_2 = Numeric_Set()
+
+        myset_2.add(Interval(3, 5))
+        myset_2.add(Interval(6, 8))
+
+        difference = myset_1.difference(myset_2)  # (2, 3] + (5, 6] + (8, 10)
+
+        self.assertEqual(len(difference.intervals), 3)
+
+        self.assertEqual(difference.intervals[0].start, 2)
+        self.assertEqual(difference.intervals[0].end, 3)
+        self.assertFalse(difference.intervals[0].is_start_inclusive)
+        self.assertTrue(difference.intervals[0].is_end_inclusive)
+
+        self.assertEqual(difference.intervals[1].start, 5)
+        self.assertEqual(difference.intervals[1].end, 6)
+        self.assertFalse(difference.intervals[1].is_start_inclusive)
+        self.assertTrue(difference.intervals[1].is_end_inclusive)
+
+        self.assertEqual(difference.intervals[2].start, 8)
+        self.assertEqual(difference.intervals[2].end, 10)
+        self.assertFalse(difference.intervals[2].is_start_inclusive)
+        self.assertFalse(difference.intervals[2].is_end_inclusive)
+
+    def test_points(self):
+        myset_1 = Numeric_Set()
+
+        myset_1.add(Interval(2, 4, True))
+        myset_1.add(Interval(5, 7))
+        myset_1.add(Interval(8, 10, is_end_inclusive=True))
+
+        myset_2 = Numeric_Set()
+
+        myset_2.add(Interval(2, 5))
+        myset_2.add(Interval(5, 10))
+
+        difference = myset_1.difference(myset_2)  # {2} + {10}
+
+        self.assertEqual(len(difference.intervals), 2)
+
+        self.assertEqual(difference.intervals[0].start, 2)
+        self.assertEqual(difference.intervals[0].end, 2)
+        self.assertTrue(difference.intervals[0].is_start_inclusive)
+        self.assertTrue(difference.intervals[0].is_end_inclusive)
+
+        self.assertEqual(difference.intervals[1].start, 10)
+        self.assertEqual(difference.intervals[1].end, 10)
+        self.assertTrue(difference.intervals[1].is_start_inclusive)
+        self.assertTrue(difference.intervals[1].is_end_inclusive)
+
+
+class TestIntersection(unittest.TestCase):
+    def test_ordinary(self):
+        myset_1 = Numeric_Set()
+
+        myset_1.add(Interval(2, 4, is_end_inclusive=True))  # (2, 4]
+        myset_1.add(Interval(5, 7))  # (5, 7)
+        myset_1.add(Interval(8, 10, is_end_inclusive=True))  # (8, 10]
+
+        myset_2 = Numeric_Set()
+
+        myset_2.add(Interval(2, 5))  # (2, 5)
+        myset_2.add(Interval(6, 9))  # (6, 9)
+
+        intersection = myset_1.intersection(
+            myset_2)  # (2, 4] + (6, 7) + (8, 9)
+
+        self.assertEqual(len(intersection.intervals), 3)
+
+        self.assertEqual(intersection.intervals[0].start, 2)
+        self.assertEqual(intersection.intervals[0].end, 4)
+        self.assertFalse(intersection.intervals[0].is_start_inclusive)
+        self.assertTrue(intersection.intervals[0].is_end_inclusive)
+
+        self.assertEqual(intersection.intervals[1].start, 6)
+        self.assertEqual(intersection.intervals[1].end, 7)
+        self.assertFalse(intersection.intervals[1].is_start_inclusive)
+        self.assertFalse(intersection.intervals[1].is_end_inclusive)
+
+        self.assertEqual(intersection.intervals[2].start, 8)
+        self.assertEqual(intersection.intervals[2].end, 9)
+        self.assertFalse(intersection.intervals[2].is_start_inclusive)
+        self.assertFalse(intersection.intervals[2].is_end_inclusive)
+
+    def test_points(self):
+        myset_1 = Numeric_Set()
+
+        myset_1.add(Interval(2, 4, is_end_inclusive=True))  # (2, 4]
+        myset_1.add(Interval(5, 7, True))  # [5, 7)
+        myset_1.add(Interval(8, 10, is_end_inclusive=True))  # (8, 10]
+
+        myset_2 = Numeric_Set()
+
+        myset_2.add(Interval(4, 5, True))  # [4, 5)
+        myset_2.add(Interval(7, 8))  # (7, 8)
+
+        intersection = myset_1.intersection(
+            myset_2)  # {4}
+
+        self.assertEqual(len(intersection.intervals), 1)
+
+        self.assertEqual(intersection.intervals[0].start, 4)
+        self.assertEqual(intersection.intervals[0].end, 4)
+        self.assertTrue(intersection.intervals[0].is_start_inclusive)
+        self.assertTrue(intersection.intervals[0].is_end_inclusive)
+
+
+class TestSubset(unittest.TestCase):
+    def test_ordinary(self):
+        pass
+
+
+class TestSuperset(unittest.TestCase):
+    def test_ordinary(self):
+        pass
+
+
+class TestPop(unittest.TestCase):
+    def test_ordinary(self):
+        pass
+
+
+class TestRemove(unittest.TestCase):
+    def test_points(self):
+        myset = Numeric_Set()
+
+        myset.add(Interval(2, 3, is_start_inclusive=True))
+        myset.add(Interval(4, 5))
+        myset.add(Interval(6, 7))
+        myset.add(Interval(8, 9))
+        myset.add(Interval(10, 11))
+        myset.add(Interval(12, 13, is_end_inclusive=True))
+
+        myset.remove(Interval(2, 13))
+
+        self.assertEqual(len(myset.intervals), 2)
+
+        self.assertEqual(myset.intervals[0].start, 2)
+        self.assertEqual(myset.intervals[0].end, 2)
+        self.assertTrue(myset.intervals[0].is_start_inclusive)
+        self.assertTrue(myset.intervals[0].is_end_inclusive)
+
+        self.assertEqual(myset.intervals[1].start, 13)
+        self.assertEqual(myset.intervals[1].end, 13)
+        self.assertTrue(myset.intervals[1].is_start_inclusive)
+        self.assertTrue(myset.intervals[1].is_end_inclusive)
+
+    def test_ordinary(self):
+        myset = Numeric_Set()
+
+        myset.add(Interval(2, 3))
+        myset.add(Interval(4, 5))
+        myset.add(Interval(6, 7))
+        myset.add(Interval(8, 9))
+        myset.add(Interval(10, 11))
+        myset.add(Interval(12, 13))
+
+        myset.remove(Interval(2.5, 12.5))
+
+        self.assertEqual(len(myset.intervals), 2)
+
+        self.assertEqual(myset.intervals[0].start, 2)
+        self.assertEqual(myset.intervals[0].end, 2.5)
+        self.assertFalse(myset.intervals[0].is_start_inclusive)
+        self.assertTrue(myset.intervals[0].is_end_inclusive)
+
+        self.assertEqual(myset.intervals[1].start, 12.5)
+        self.assertEqual(myset.intervals[1].end, 13)
+        self.assertTrue(myset.intervals[1].is_start_inclusive)
+        self.assertFalse(myset.intervals[1].is_end_inclusive)
+
+
+class TestSymmetricDifference(unittest.TestCase):
+    def test_ordinary(self):
+        pass
+
+
+class TestSymmetricDifferenceUpdate(unittest.TestCase):
+    def test_ordinary(self):
+        pass
+
+
+class TestUnion(unittest.TestCase):
+    def test_ordinary(self):
+        pass
+
+
+class TestUpdate(unittest.TestCase):
+    def test_ordinary(self):
+        pass
+
+
+class TestEmpty(unittest.TestCase):
+    def test_ordinary(self):
+        pass
+
+
 if __name__ == '__main__':
     unittest.main()
