@@ -47,6 +47,36 @@ class TestIntervalOverlap(unittest.TestCase):
         self.assertTrue(interval_2.is_overlapping(interval_1))
 
 
+class TestIntervalAlmostOverlap(unittest.TestCase):
+    def test_ordinary_negative(self):
+        interval_1 = Interval(-1.5, 0.5)
+        interval_2 = Interval(1, 3, is_end_inclusive=True)
+
+        self.assertFalse(interval_1.is_almost_overlapping(interval_2))
+        self.assertFalse(interval_2.is_almost_overlapping(interval_1))
+
+    def test_full_overlap(self):
+        interval_1 = Interval(-1.5, 10)
+        interval_2 = Interval(1, 3, is_end_inclusive=True)
+
+        self.assertFalse(interval_1.is_almost_overlapping(interval_2))
+        self.assertFalse(interval_2.is_almost_overlapping(interval_1))
+
+    def test_negative_inclusive(self):
+        interval_1 = Interval(-1.5, 1)
+        interval_2 = Interval(1, 3, is_end_inclusive=True)
+
+        self.assertFalse(interval_1.is_almost_overlapping(interval_2))
+        self.assertFalse(interval_2.is_almost_overlapping(interval_1))
+
+    def test_positive_inclusive(self):
+        interval_1 = Interval(-1.5, 1, is_end_inclusive=True)
+        interval_2 = Interval(1, 3)
+
+        self.assertTrue(interval_1.is_almost_overlapping(interval_2))
+        self.assertTrue(interval_2.is_almost_overlapping(interval_1))
+
+
 class TestIntervalIncludes(unittest.TestCase):
     def test_inside(self):
         interval = Interval(1, 3)

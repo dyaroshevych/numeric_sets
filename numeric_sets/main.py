@@ -82,7 +82,67 @@ class Interval:
 
         return is_inside or is_start or is_end
 
-    @ staticmethod
+    def copy(self):
+        """
+        Return a copy of the interval.
+        """
+        start, end = self.start, self.end
+        is_start_inclusive, is_end_inclusive = self.is_start_inclusive, self.is_end_inclusive
+
+        return Interval(start, end, is_start_inclusive, is_end_inclusive)
+
+    @staticmethod
+    def difference(interval_1, interval_2):
+        """
+        Return a set that consists of difference between two given intervals.
+        """
+        intersection = Interval.intersection(interval_1, interval_2)
+
+        if intersection is None:
+            return interval_1.copy()
+
+        # Take the left part - between ends of intervals
+        start = interval_1.start
+        end = intersection.start
+
+        is_start_inclusive = interval_1.is_start_inclusive
+        is_end_inclusive = not intersection.is_start_inclusive
+
+        if start == end:
+            is_start_inclusive = is_end_inclusive = is_start_inclusive and is_end_inclusive
+
+        if start > end or (start == end and not is_start_inclusive):
+            left = None
+        else:
+            left = Interval(start, end, is_start_inclusive, is_end_inclusive)
+
+        # Take the right part - between ends of intervals
+        start = intersection.end
+        end = interval_1.end
+
+        is_start_inclusive = not intersection.is_end_inclusive
+        is_end_inclusive = interval_1.is_end_inclusive
+
+        if start == end:
+            is_start_inclusive = is_end_inclusive = is_start_inclusive and is_end_inclusive
+
+        if start > end or (start == end and not is_end_inclusive):
+            right = None
+        else:
+            right = Interval(start, end, is_start_inclusive, is_end_inclusive)
+
+        # Add constructed intervals to the set.
+        numeric_set = Numeric_Set()
+
+        if left is not None:
+            numeric_set.add(left)
+
+        if right is not None:
+            numeric_set.add(right)
+
+        return numeric_set
+
+    @staticmethod
     def intersection(interval_1, interval_2):
         """
         Return an interval that consists of intersection of two given intervals.
@@ -101,7 +161,7 @@ class Interval:
 
         return Interval(start, end, is_start_inclusive, is_end_inclusive)
 
-    @ staticmethod
+    @staticmethod
     def union(interval_1, interval_2):
         """
         Return a set of intervals that consists of union of two given intervals.
@@ -208,7 +268,7 @@ class Numeric_Set:
         """
         Return a copy of the numric set.
         """
-        return Numeric_Set([*self.intervals])
+        return Numeric_Set([interval.copy() for interval in self.intervals])
 
     def difference(self, set) -> None:
         """
@@ -261,7 +321,6 @@ class Numeric_Set:
 
         return self.intervals.pop()
 
-    # to be finished...
     def remove(self, interval: Interval) -> None:
         """
         Remove a numeric interval from the set.
@@ -272,7 +331,20 @@ class Numeric_Set:
         # All intervals located to the right from the new interval
         right = self.get_right_intervals(interval)
 
-        self.intervals = left + right
+        middle = []
+
+        if len(right) == 0:
+            middle_intervals = self.intervals[len(left):]
+        else:
+            middle_intervals = self.intervals[len(left):~len(right) + 1]
+
+        for intr in middle_intervals:
+            print(intr.get_formatted())
+            diff = Interval.difference(intr, interval)
+
+            middle += diff.intervals
+
+        self.intervals = left + middle + right
 
     def symmetric_difference(self, set):
         """
@@ -320,7 +392,7 @@ class Numeric_Set:
             for interval in self.intervals:
                 output_file.write(interval.get_formatted() + '\n')
 
-    @ staticmethod
+    @staticmethod
     def read(filename: str) -> List[Interval]:
         """
         Read a set of numerical intervals from the given file.
@@ -344,3 +416,18 @@ class Numeric_Set:
                     Interval(start, end, is_start_inclusive, is_end_inclusive))
 
         return intervals
+
+
+# myset = Numeric_Set()
+
+# myset.add(Interval(2, 3))
+# myset.add(Interval(4, 5))
+# myset.add(Interval(6, 7))
+# myset.add(Interval(8, 9))
+# myset.add(Interval(10, 11))
+# myset.add(Interval(12, 13, is_end_inclusive=True))
+
+# myset.remove(Interval(-10, 13))
+
+
+# myset.save()
