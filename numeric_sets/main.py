@@ -169,15 +169,15 @@ class Interval:
             right = Interval(start, end, is_start_inclusive, is_end_inclusive)
 
         # Add constructed intervals to the set.
-        NumericSet = NumericSet()
+        numeric_set = NumericSet()
 
         if left is not None:
-            NumericSet.add(left)
+            numeric_set.add(left)
 
         if right is not None:
-            NumericSet.add(right)
+            numeric_set.add(right)
 
-        return NumericSet
+        return numeric_set
 
     @staticmethod
     def intersection(interval_1, interval_2):
@@ -221,7 +221,10 @@ class Interval:
 
 
 class NumericSet:
-    def __init__(self, intervals=[]):
+    def __init__(self, intervals=None):
+        if intervals is None:
+            intervals = []
+
         self.intervals = sorted(intervals, key=lambda interval: interval.start)
 
     def get_left_intervals(self, interval: Interval) -> List[Interval]:
@@ -307,41 +310,41 @@ class NumericSet:
         """
         return NumericSet([interval.copy() for interval in self.intervals])
 
-    def difference(self, set) -> None:
+    def difference(self, numeric_set) -> None:
         """
         Return a set representing a difference
         between the set and the given set.
         """
         updated_set = self.copy()
-        updated_set.difference_update(set)
+        updated_set.difference_update(numeric_set)
 
         return updated_set
 
-    def difference_update(self, set) -> None:
+    def difference_update(self, numeric_set) -> None:
         """
         Calculate difference between the set and the
         given set and update the set in-place.
         """
-        for interval in set.intervals:
+        for interval in numeric_set.intervals:
             self.remove(interval)
 
-    def intersection(self, set):
+    def intersection(self, numeric_set):
         """
         Return an intersection of the set and the given set.
         """
         updated_set = self.copy()
-        updated_set.intersection_update(set)
+        updated_set.intersection_update(numeric_set)
 
         return updated_set
 
-    def intersection_update(self, set) -> None:
+    def intersection_update(self, numeric_set) -> None:
         """
         Calculate intersection of the set and the
         given set and update the set in-place.
         """
         updated_intervals = []
 
-        for interval in set.intervals:
+        for interval in numeric_set.intervals:
             for intr in self.intervals:
                 intersection = Interval.intersection(interval, intr)
 
@@ -350,17 +353,17 @@ class NumericSet:
 
         self.intervals = updated_intervals
 
-    def issubset(self, set) -> bool:
+    def issubset(self, numeric_set) -> bool:
         """
         Determine whether the set is a subset of the given set.
         """
-        return self.difference(set).is_empty()
+        return self.difference(numeric_set).is_empty()
 
-    def issuperset(self, set) -> bool:
+    def issuperset(self, numeric_set) -> bool:
         """
         Determine whether the set is a superset of the given set.
         """
-        return set.issubset(self)
+        return numeric_set.issubset(self)
 
     def pop(self) -> Interval:
         """
@@ -396,35 +399,35 @@ class NumericSet:
 
         self.intervals = left + middle + right
 
-    def symmetric_difference(self, set):
+    def symmetric_difference(self, numeric_set):
         """
         Return a set with the symmetric difference of two sets.
         """
-        return self.difference(set).union(set.difference(self))
+        return self.difference(numeric_set).union(set.difference(self))
 
-    def symmetric_difference_update(self, set):
+    def symmetric_difference_update(self, numeric_set):
         """
         Find a set with the symmetric difference of two sets
         and update the set to be equal to it.
         """
-        self.intervals = self.difference(set).union(
-            set.difference(self)).intervals
+        self.intervals = self.difference(numeric_set).union(
+            numeric_set.difference(self)).intervals
 
-    def union(self, set) -> None:
+    def union(self, numeric_set) -> None:
         """
         Return a union of the set and the given set of numeric intervals.
         """
         updated_set = self.copy()
-        updated_set.update(set)
+        updated_set.update(numeric_set)
 
         return updated_set
 
-    def update(self, set) -> None:
+    def update(self, numeric_set) -> None:
         """
         Find a union of the set and the given set of numeric intervals
         and update the set to be equal to it.
         """
-        for interval in set.intervals:
+        for interval in numeric_set.intervals:
             self.add(interval)
 
     def is_empty(self) -> bool:
