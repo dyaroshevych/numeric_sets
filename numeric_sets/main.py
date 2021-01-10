@@ -25,7 +25,7 @@
         issubset - determine whether the set is a subset of the given set
         issuperset - determine whether the set is a superset of the given set
         pop - remove the rightmost interval if such exists
-        remove - remove a numeric interval from the set
+        remove - remove a numeric interval from the numeric set
         symmetric_difference - return the symmetric difference of two sets
         symmetric_difference_update - assign set to the symmetric difference of two sets
         union - return a union of the set and the given set
@@ -55,6 +55,8 @@ class Interval:
     def get_formatted(self) -> str:
         """
         Return formatted interval as a string.
+
+        :return: interval as a formatted string
         """
         # Corner case - single point
         if self.start == self.end:
@@ -68,6 +70,9 @@ class Interval:
     def is_overlapping(self, interval) -> bool:
         """
         Determine whether the interval overlaps with the given interval.
+
+        :param interval: a numeric interval
+        :return: True if intervals overlap, False otherweise
         """
         # Check if start of the first interval is to
         # the right from the start of the second interval
@@ -103,6 +108,9 @@ class Interval:
         """
         Determine whether the interval almost overlaps with the other interval.
         Two intervals almost overlap if their union forms one interval.
+
+        :param interval: a numeric interval
+        :return: True if intervals almost overlap, False otherweise
         """
         # If intervals overlap, they are not almost overlapping
         if self.is_overlapping(interval):
@@ -118,6 +126,9 @@ class Interval:
     def includes(self, point: Number) -> bool:
         """
         Determine whether the interval includes the given point.
+
+        :param point: a numeric point
+        :return: True if the interval includes the given point, False otherweise
         """
         is_inside = self.start < point < self.end
         is_start = self.is_start_inclusive and self.start == point
@@ -128,6 +139,8 @@ class Interval:
     def copy(self):
         """
         Return a copy of the interval.
+
+        :return: a copy of the interval
         """
         start, end = self.start, self.end
         is_start_inclusive, is_end_inclusive = self.is_start_inclusive, self.is_end_inclusive
@@ -138,6 +151,10 @@ class Interval:
     def difference(interval_1, interval_2):
         """
         Return a set that consists of difference between two given intervals.
+
+        :param interval_1: a numeric interval
+        :param interval_2: a numeric interval
+        :return: difference between two given intervals
         """
         intersection = Interval.intersection(interval_1, interval_2)
 
@@ -190,6 +207,10 @@ class Interval:
         """
         Return an interval that consists of intersection of two given intervals.
         Return None if the result interval is empty.
+
+        :param interval_1: a numeric interval
+        :param interval_2: a numeric interval
+        :return: intersection of two given intervals
         """
         start = max(interval_1.start, interval_2.start)
         end = min(interval_1.end, interval_2.end)
@@ -208,6 +229,10 @@ class Interval:
     def union(interval_1, interval_2):
         """
         Return a set of intervals that consists of union of two given intervals.
+
+        :param interval_1: a numeric interval
+        :param interval_2: a numeric interval
+        :return: union of two given intervals
         """
         # Check if the result should consist of two separate intervals.
         if not (interval_1.is_overlapping(interval_2) or
@@ -239,6 +264,9 @@ class NumericSet:
     def get_left_intervals(self, interval: Interval) -> List[Interval]:
         """
         Construct a list of intervals that are to the left from the given interval.
+
+        :param interval: a numeric interval
+        :return: a list of intervals
         """
         left = []
 
@@ -251,6 +279,9 @@ class NumericSet:
     def get_right_intervals(self, interval: Interval) -> List[Interval]:
         """
         Construct a list of intervals that are to the right from the given interval.
+
+        :param interval: a numeric interval
+        :return: a list of intervals
         """
         right = []
 
@@ -263,6 +294,8 @@ class NumericSet:
     def add(self, new_interval: Interval) -> None:
         """
         Add a numeric interval to the set.
+
+        :param interval: a numeric interval
         """
         # If there are no other intervals, simply add the interval
         if self.is_empty():
@@ -327,6 +360,9 @@ class NumericSet:
         """
         Return a set representing a difference
         between the set and the given set.
+
+        :param numeric_set: a numeric set
+        :return: difference between the set and the given set
         """
         updated_set = self.copy()
         updated_set.difference_update(numeric_set)
@@ -337,6 +373,8 @@ class NumericSet:
         """
         Calculate difference between the set and the
         given set and update the set in-place.
+
+        :param numeric_set: a numeric set
         """
         for interval in numeric_set.intervals:
             self.remove(interval)
@@ -344,6 +382,9 @@ class NumericSet:
     def intersection(self, numeric_set):
         """
         Return an intersection of the set and the given set.
+
+        :param numeric_set: a numeric set
+        :return: intersection of the set and the given set
         """
         updated_set = self.copy()
         updated_set.intersection_update(numeric_set)
@@ -354,6 +395,8 @@ class NumericSet:
         """
         Calculate intersection of the set and the
         given set and update the set in-place.
+
+        :param numeric_set: a numeric set
         """
         updated_intervals = []
 
@@ -369,12 +412,18 @@ class NumericSet:
     def issubset(self, numeric_set) -> bool:
         """
         Determine whether the set is a subset of the given set.
+
+        :param numeric_set: a numeric set
+        :return: whether the interval is a subset of the given interval
         """
         return self.difference(numeric_set).is_empty()
 
     def issuperset(self, numeric_set) -> bool:
         """
         Determine whether the set is a superset of the given set.
+
+        :param numeric_set: a numeric set
+        :return: whether the interval is a superset of the given interval
         """
         return numeric_set.issubset(self)
 
@@ -382,6 +431,8 @@ class NumericSet:
         """
         Remove the rightmost interval if such exists.
         Otherwise, return None.
+
+        :return: the rightmost interval
         """
         if self.is_empty():
             return None
@@ -391,6 +442,8 @@ class NumericSet:
     def remove(self, interval: Interval) -> None:
         """
         Remove a numeric interval from the set.
+
+        :param interval: a numeric interval
         """
         # All intervals located to the left from the new interval
         left = self.get_left_intervals(interval)
@@ -415,6 +468,9 @@ class NumericSet:
     def symmetric_difference(self, numeric_set):
         """
         Return a set with the symmetric difference of two sets.
+
+        :param numeric_set: a numeric set
+        :return: symmetric difference of the set and the given set
         """
         return self.difference(numeric_set).union(numeric_set.difference(self))
 
@@ -422,6 +478,8 @@ class NumericSet:
         """
         Find a set with the symmetric difference of two sets
         and update the set to be equal to it.
+
+        :param numeric_set: a numeric set
         """
         self.intervals = self.difference(numeric_set).union(
             numeric_set.difference(self)).intervals
@@ -429,6 +487,9 @@ class NumericSet:
     def union(self, numeric_set) -> None:
         """
         Return a union of the set and the given set of numeric intervals.
+
+        :param numeric_set: a numeric set
+        :return: union of the set and the given set
         """
         updated_set = self.copy()
         updated_set.update(numeric_set)
@@ -439,6 +500,8 @@ class NumericSet:
         """
         Find a union of the set and the given set of numeric intervals
         and update the set to be equal to it.
+
+        :param numeric_set: a numeric set
         """
         for interval in numeric_set.intervals:
             self.add(interval)
@@ -446,6 +509,8 @@ class NumericSet:
     def is_empty(self) -> bool:
         """
         Determine whether a set of intervals is empty.
+
+        :return: whether the set is empty
         """
         return len(self.intervals) == 0
 
@@ -453,6 +518,8 @@ class NumericSet:
         """
         Save a set of numeric intervals in the given file.
         The default filename is 'results.txt'.
+
+        :param filename: the name of the file
         """
         with open(filename, 'w') as output_file:
             for interval in self.intervals:
@@ -462,6 +529,9 @@ class NumericSet:
     def read(filename: str):
         """
         Read a set of numerical intervals from the given file and return a numeric set.
+
+        :param filename: the name of the file
+        :return: the numeric set
         """
         numeric_set = NumericSet()
 
