@@ -485,6 +485,3 @@ class NumericSet:
                     Interval(start, end, is_start_inclusive, is_end_inclusive))
 
         return numeric_set
-
-
-NumericSet.read('intervals.txt').save()
