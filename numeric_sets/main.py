@@ -49,13 +49,17 @@ class Interval:
         """
         self.start = start
         self.end = end
-        self.is_start_inclusive = is_start_inclusive
-        self.is_end_inclusive = is_end_inclusive
+        self.is_start_inclusive = is_start_inclusive or start == end
+        self.is_end_inclusive = is_end_inclusive or start == end
 
     def get_formatted(self) -> str:
         """
         Return formatted interval as a string.
         """
+        # Corner case - single point
+        if self.start == self.end:
+            return f'{{{self.start}}}'
+
         opening_bracket = '[' if self.is_start_inclusive else '('
         closing_bracket = ']' if self.is_end_inclusive else ')'
 
@@ -455,39 +459,32 @@ class NumericSet:
                 output_file.write(interval.get_formatted() + '\n')
 
     @ staticmethod
-    def read(filename: str) -> List[Interval]:
+    def read(filename: str):
         """
-        Read a set of numerical intervals from the given file.
+        Read a set of numerical intervals from the given file and return a numeric set.
         """
-        intervals = []
+        numeric_set = NumericSet()
 
         with open(filename, 'r') as input_file:
             for raw_interval in input_file.readlines():
-                # remove '\n' at the end of the line
-                raw_interval = raw_interval.rstrip()
+                # remove '\n' at the end of the line, remove parentheses, split into parts
+                raw_interval = raw_interval.rstrip()[1:-1].split(', ')
 
                 if not raw_interval:
                     continue
 
-                start, end = tuple(raw_interval[1:-1].split(', '))
-
-                if start.endswith('inf'):
-                    start = float(start)
+                if len(raw_interval) == 1:
+                    start = end = float(raw_interval[0])
                 else:
-                    start = int(start)
-
-                if end.endswith('inf'):
-                    end = float(end)
-                else:
-                    end = int(end)
+                    start, end = map(float, raw_interval)
 
                 is_start_inclusive = raw_interval[0] == '['
                 is_end_inclusive = raw_interval[-1] == ']'
 
-                intervals.append(
+                numeric_set.add(
                     Interval(start, end, is_start_inclusive, is_end_inclusive))
 
-        return intervals
+        return numeric_set
 
 
-NumericSet(NumericSet.read('intervals.txt')).save()
+NumericSet.read('intervals.txt').save()

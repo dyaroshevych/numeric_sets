@@ -1,7 +1,6 @@
 __pycache__
 *.pyc
 .vscode
-result.txt
 build
 dist
 numeric_sets_dyaroshevych.egg-info
