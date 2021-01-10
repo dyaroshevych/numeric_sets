@@ -9,7 +9,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name="numeric_sets_dyaroshevych",  # Replace with your own username
-    version="0.0.1",
+    version="0.0.3",
     author="Dmytro Yaroshevych",
     author_email="dyaroshevych@gmail.com",
     description="A package for performing operations on numeric sets",
