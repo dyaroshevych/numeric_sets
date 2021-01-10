@@ -469,7 +469,17 @@ class NumericSet:
                 if not raw_interval:
                     continue
 
-                start, end = map(int, raw_interval[1:-1].split(', '))
+                start, end = tuple(raw_interval[1:-1].split(', '))
+
+                if start.endswith('inf'):
+                    start = float(start)
+                else:
+                    start = int(start)
+
+                if end.endswith('inf'):
+                    end = float(end)
+                else:
+                    end = int(end)
 
                 is_start_inclusive = raw_interval[0] == '['
                 is_end_inclusive = raw_interval[-1] == ']'
@@ -478,3 +488,6 @@ class NumericSet:
                     Interval(start, end, is_start_inclusive, is_end_inclusive))
 
         return intervals
+
+
+NumericSet(NumericSet.read('intervals.txt')).save()
